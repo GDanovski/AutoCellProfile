@@ -13,31 +13,33 @@ namespace AutoCellProfile
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Input directory:");
-            string dir = Console.ReadLine();
-            Console.WriteLine("Profile type ( Avg = 0, Max = 1, Min = 2):");
-
-            Data.ProfileType type = (Data.ProfileType)int.Parse(Console.ReadLine());
-
-            string[] files = Directory.GetFiles(dir, "*.tif");
-            List<Series> output = new List<Series>();
-
-            foreach (string file in files)
+            while (true)
             {
-                Console.WriteLine(file + " - processing...");
-                
-                var image = GetImage(file);
+                Console.WriteLine("Input directory:");
+                string dir = Console.ReadLine();
+                Console.WriteLine("Profile type ( Avg = 0, Max = 1, Min = 2):");
 
-                Data.Dimention dim = image[0].Length > image[0][0].Length ? Data.Dimention.Y : Data.Dimention.X;
+                Data.ProfileType type = (Data.ProfileType)int.Parse(Console.ReadLine());
 
-                for (int i = 0; i < image.Length; i++)
-                    output.Add(Data.AddSeries(i, image[i], dim, type));
+                string[] files = Directory.GetFiles(dir, "*.tif");
+                List<Series> output = new List<Series>();
 
-                WriteOutput(dir + "\\" + Path.GetFileNameWithoutExtension(file) + "_Profile.txt", dim, output);
+                foreach (string file in files)
+                {
+                    Console.WriteLine(file + " - processing...");
 
-                output.Clear();
+                    var image = GetImage(file);
+
+                    Data.Dimention dim = image[0].Length > image[0][0].Length ? Data.Dimention.Y : Data.Dimention.X;
+
+                    for (int i = 0; i < image.Length; i++)
+                        output.Add(Data.AddSeries(i, image[i], dim, type));
+
+                    WriteOutput(dir + "\\" + Path.GetFileNameWithoutExtension(file) + "_Profile.txt", dim, output);
+
+                    output.Clear();
+                }
             }
-            Console.ReadKey();
         }
         private static void WriteOutput(string dir, Data.Dimention dim, List<Series> output)
         {
